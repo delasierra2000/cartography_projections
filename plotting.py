@@ -7,17 +7,17 @@ import os
 from commons.coords_transformation import *
 
 
-root1="./data/coastline/asia-cil.txt"
-root2="./data/coastline/europe-cil.txt"
-root3="./data/coastline/africa-cil.txt"
-root4="./data/coastline/namer-cil.txt"
-root5="./data/coastline/samer-cil.txt"
+root1="./data/coastline/mercator_points/asia-cil-MERC.txt"
+root2="./data/coastline/mercator_points/europe-cil-MERC.txt"
+root3="./data/coastline/mercator_points/africa-cil-MERC.txt"
+root4="./data/coastline/mercator_points/namer-cil-MERC.txt"
+root5="./data/coastline/mercator_points/samer-cil-MERC.txt"
 
-coords1=mercator_map(root1)
-coords2=mercator_map(root2)
-coords3=mercator_map(root3)
-coords4=mercator_map(root4)
-coords5=mercator_map(root5)
+coords1=file_data_extraction(root1)
+coords2=file_data_extraction(root2)
+coords3=file_data_extraction(root3)
+coords4=file_data_extraction(root4)
+coords5=file_data_extraction(root5)
 
 print(len(coords1)+len(coords2)+len(coords3)+len(coords4)+len(coords5))
 
@@ -44,16 +44,15 @@ plt.scatter(x3, y3, s=0.01)
 plt.scatter(x4, y4, s=0.01)
 plt.scatter(x5, y5, s=0.01)
 
-
-# Etiquetas de los ejes
+# Labels
 plt.xlabel('Eje X')
 plt.ylabel('Eje Y')
 
-# Título
+# Title
 plt.title('Mercator')
 plt.xlim(-np.pi, np.pi)
 plt.ylim(-2, 2)
 plt.gca().set_aspect(np.pi/4, adjustable='box')
 
-# Mostrar el gráfico
+# Show Graphic
 plt.show()
