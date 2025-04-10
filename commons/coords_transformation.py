@@ -52,8 +52,8 @@ def cylinder2plane(vector: NDArray[np.float64])->NDArray[np.float64]:
 
     angle=np.arccos(np.dot(vector_XY,pos_from_green))
 
-    if X==1 and Y==0:
-        X_plane=X
+    if abs(X-1)<=0.01 and Y==0:
+        X_plane=0
     elif Y>0:
         angle=np.arccos(np.dot(vector_XY,pos_from_green))
         X_plane=angle
@@ -69,3 +69,36 @@ def mercator_map(root: str)->List[NDArray[np.float64]]:
     data=file_data_extraction(root)
 
     return [cylinder2plane(proj_cylinder(EtoC(x))) for x in data]
+
+#center cartesian coordinates to ecuator, then to vector (0,0,1), then rotation from (0,0,1)
+def ob_mercator_map(root: str, center:NDArray[np.float64], direction : np.float64)->List[NDArray[np.float64]]:
+
+
+    vector_center=EtoC(center)
+    a=1/np.sqrt((vector_center[0])**2+(vector_center[1])**2)
+    new_vector=a*np.array([vector_center[0],vector_center[1],0])
+    angle=-Deg2Rad(direction)
+    M1=matrix_rot(vector_center,new_vector)
+    M2=matrix_rot(new_vector,np.array([1,0,0]))
+    Mx=np.array([[1, 0, 0], [0, np.cos(angle), -np.sin(angle)],[0,np.sin(angle),np.cos(angle)]])
+
+    M_final=Mx @ M2 @ M1
+    
+    data=file_data_extraction(root)
+
+    data2=[M_final @ EtoC(x) for x in data]
+
+    return [cylinder2plane(proj_cylinder(x)) for x in data2]
+
+#Calculates the matrix rotation to rotate one unit vector to another
+def matrix_rot(initial_vector:NDArray[np.float64], final_vector:NDArray[np.float64])->NDArray[np.float64]:
+
+
+    v=np.cross(initial_vector,final_vector)
+    cos=np.dot(final_vector,initial_vector)
+
+    M=np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]],[-v[1],v[0],0]])
+
+    np.identity(3)+M+M@M*(1/(1+cos))
+
+    return np.identity(3)+M+M@M*(1/(1+cos))
