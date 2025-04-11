@@ -52,7 +52,7 @@ def cylinder2plane(vector: NDArray[np.float64])->NDArray[np.float64]:
 
     angle=np.arccos(np.dot(vector_XY,pos_from_green))
 
-    if abs(X-1)<=0.01 and Y==0:
+    if X==1 and Y==0:
         X_plane=0
     elif Y>0:
         angle=np.arccos(np.dot(vector_XY,pos_from_green))
@@ -102,3 +102,62 @@ def matrix_rot(initial_vector:NDArray[np.float64], final_vector:NDArray[np.float
     np.identity(3)+M+M@M*(1/(1+cos))
 
     return np.identity(3)+M+M@M*(1/(1+cos))
+
+
+#function that pojects the points on the spheric surface onto the the cylinder 
+def proj_standard_gnomonic(vector: NDArray[np.float64])->NDArray[np.float64]:
+
+    Mg=np.array([[np.cos(-np.pi/2),-np.sin(-np.pi/2)],[np.sin(-np.pi/2),np.cos(-np.pi/2)]])
+
+    if vector[2]<=0:
+        sol=None
+    else:
+        constant=1/vector[2]
+        sol=Mg @ (constant*vector[0:2])
+        
+    return sol
+
+
+def gnomonic_standard_map(root: str, phi_max: np.float64=45)->List[NDArray[np.float64]]:
+
+    data=file_data_extraction(root)
+    data=[x for x in data if x[0]>phi_max]
+
+    return [proj_standard_gnomonic(EtoC(x)) for x in data]
+
+
+
+#function that pojects the points on the spheric surface onto the the cylinder 
+def proj_standard_stereographic(vector: NDArray[np.float64])->NDArray[np.float64]:
+
+    vector=np.array([0,0,1])+vector
+
+    Mg=np.array([[np.cos(-np.pi/2),-np.sin(-np.pi/2)],[np.sin(-np.pi/2),np.cos(-np.pi/2)]])
+
+    constant=2/(vector[2])
+
+    sol=Mg @ (constant*vector[0:2])
+        
+    return sol
+
+
+def stereographic_standard_map(root: str, phi_max: np.float64=30)->List[NDArray[np.float64]]:
+
+    data=file_data_extraction(root)
+    data=[x for x in data if x[0]>phi_max]
+
+    return [proj_standard_stereographic(EtoC(x)) for x in data]
+
+
+def gnomonic_map(root: str, phi_max: np.float64=45,center: NDArray[np.float64]=np.array([90,0]))->List[NDArray[np.float64]]:
+
+
+
+    data=file_data_extraction(root)
+    data=[EtoC(x) for x in data]
+    direction=EtoC(center)
+    M=matrix_rot(direction,np.array([0,0,1]))
+    data=[M @ x for x in data]
+    data2=[x for x in data if x[2]>np.sin(phi_max*2*np.pi/360)]
+
+    return [proj_standard_gnomonic(x) for x in data2]
