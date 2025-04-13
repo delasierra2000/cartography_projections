@@ -154,6 +154,13 @@ plt.xlim(-np.pi, np.pi)
 plt.ylim(-2, 2)
 plt.gca().set_aspect(np.pi/4, adjustable='box')
 
+#save png
+if not os.path.exists("../png/"):
+    os.makedirs("../png/")
+
+if not os.path.exists("../png/all_maps/"):
+    os.makedirs("../png/all_maps/")
+
 plt.savefig("../png/"+name+".png", dpi=300, bbox_inches='tight')
 
 root_all_maps="../png/all_maps/"

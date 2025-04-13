@@ -38,6 +38,12 @@ i=0
 
 long=long[73:]
 
+if not os.path.exists("../png/"):
+    os.makedirs("../png/")
+
+if not os.path.exists("../png/all_maps/"):
+    os.makedirs("../png/all_maps/")
+
 for l in long:
     
 
