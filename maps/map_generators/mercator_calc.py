@@ -32,8 +32,8 @@ name="Mercator_2"
 name="Mercator"
 
 # PARAMETERS
-angle_direction=37
-center=np.array([40,-3])
+angle_direction=90
+center=np.array([90,0])
 
 # PROJECTION
 point_calc=partial(ob_mercator_map,center=center,direction=angle_direction)
@@ -102,6 +102,7 @@ else:
 #----------------------------------------------------------------------
 
 fig, ax = plt.subplots(figsize=(20, 11.25))
+ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
 x1 = [punto[0] for punto in coords1]
 y1 = [punto[1] for punto in coords1]
@@ -134,12 +135,18 @@ plt.scatter(x_mer, y_mer, s=0.01, alpha=0.2, c='k')
 plt.scatter(x_pal, y_pal, s=0.01, alpha=0.2, c='k')
 
 # Plot limit
+h=np.linspace(-2,2,1000)
+l=np.linspace(-np.pi, np.pi,1000)
 
-#r=1/np.tan(angle*2*np.pi/360)
-#list_theta=np.linspace(0,2*np.pi,1000)
-#x=[r*np.cos(t) for t in list_theta]
-#y=[r*np.sin(t) for t in list_theta]
-#plt.plot(x, y, c='k')
+cons1=[-2]*1000
+cons2=[2]*1000
+cons3=[-np.pi]*1000
+cons4=[np.pi]*1000
+
+plt.plot(l,cons1,c='k')
+plt.plot(l,cons2,c='k')
+plt.plot(cons3,h,c='k')
+plt.plot(cons4,h,c='k')
 
 # Title
 plt.title(name)

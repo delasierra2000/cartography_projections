@@ -32,7 +32,7 @@ name="Gnomonic_2"
 name="Gnomonic"
 
 # PARAMETERS
-angle=30
+angle=0
 center=np.array([90,0])
 
 # PROJECTION

@@ -1,0 +1,15 @@
+# Manim & Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Manim output
+
+*.mp4
+*.mov
+*.avi
+*.png
+*.jpg
+*.svg
+
