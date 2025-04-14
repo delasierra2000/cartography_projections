@@ -1,15 +1,15 @@
-# Manim & Python
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Manim output
+# img and video files
 
+*.rar
 *.mp4
 *.mov
 *.avi
 *.png
 *.jpg
 *.svg
-
