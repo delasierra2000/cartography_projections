@@ -3,6 +3,7 @@ from typing import List, Dict, Union
 from numpy.typing import NDArray
 import os
 import sys
+import timeit
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -15,41 +16,62 @@ from commons.file_management import *
 #----------------------------------------
 
 #function that pojects the points on the spheric surface onto the the cylinder 
-def proj_cylinder(vector: NDArray[np.float64])->NDArray[np.float64]:
 
-    constant=1/np.sqrt(vector[0]**2+vector[1]**2)
+
+def proj_cylinder(vector: NDArray[np.float64],long_ini:float)->NDArray[np.float64]:
+
+    factor=2*np.pi/360
+    long_ini=long_ini*factor
+    long=vector[:,1]*factor
+    lat=vector[:,0]*factor
+
+
+    x = np.where(
+        np.abs(long - long_ini) <= np.pi,
+        long - long_ini,
+        np.where(
+            long - long_ini<-np.pi,
+            long - long_ini + 2 * np.pi,
+            long - long_ini - 2 * np.pi
+        )
+    )
     
-    return vector*constant
-
-#cylinder to plane
-def cylinder2plane(vector: NDArray[np.float64])->NDArray[np.float64]:
+    y=np.log(np.tan(np.pi/4+lat/2))
     
-    X=vector[0]
-    Y=vector[1]
-    Z=vector[2]
+    return np.stack((x,y),axis=1)
 
-    pos_from_green=np.array([1,0])
-    vector_XY=np.array([X,Y])
 
-    angle=np.arccos(np.dot(vector_XY,pos_from_green))
 
-    if X==1 and Y==0:
-        X_plane=0
-    elif Y>0:
-        angle=np.arccos(np.dot(vector_XY,pos_from_green))
-        X_plane=angle
-    else:
-        angle=np.arccos(np.dot(vector_XY,pos_from_green))
-        X_plane=-angle
-    
-    return np.array([X_plane,Z])
+
+
+
 
 #funtion to obtain the points in the 2D representation (Mercator)
-def mercator_map(root: str)->List[NDArray[np.float64]]:
+def mercator_map(root: str,long_ini: np.float64)->List[NDArray[np.float64]]:
 
     data=file_data_extraction(root)
 
-    return [cylinder2plane(proj_cylinder(EtoC(x))) for x in data]
+    return proj_cylinder(data,long_ini)
+
+def mercator_map2(root: str, center: NDArray[np.float64], angle: np.float64)->List[NDArray[np.float64]]:
+
+    data=file_data_extraction(root)
+    data=data*2*np.pi/360
+    center=center*2*np.pi/360
+    angle=-angle*2*np.pi/360
+    
+    R=rot2ecuator(center)
+
+    long_0=center[1]
+    temp_vector=EtoC(np.array([[0,long_0]]))
+    R2=rot(temp_vector,angle)
+
+    M=R@R2
+
+
+    rotated_data = CtoE(EtoC(data) @ M)/(2*np.pi/360)
+
+    return proj_cylinder(rotated_data,center[1]/(2*np.pi/360))
 
 #center cartesian coordinates to ecuator, then to vector (0,0,1), then rotation from (0,0,1)
 def ob_mercator_map(root: str, center:NDArray[np.float64], direction : np.float64)->List[NDArray[np.float64]]:

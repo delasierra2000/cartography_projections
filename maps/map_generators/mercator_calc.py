@@ -4,6 +4,10 @@ import math as m
 from typing import List, Dict, Union
 from numpy.typing import NDArray
 from functools import partial
+import timeit
+import datashader as ds
+import datashader.transfer_functions as tf
+import pandas as pd
 
 import os
 import sys
@@ -32,11 +36,13 @@ name="Mercator_2"
 name="Mercator"
 
 # PARAMETERS
-angle_direction=90
-center=np.array([90,0])
+angle_direction=40
+center_pos=np.array([35,104])
 
 # PROJECTION
-point_calc=partial(ob_mercator_map,center=center,direction=angle_direction)
+
+
+point_calc=partial(mercator_map2,center=center_pos,angle=angle_direction)
 
 
 #----------------------------------------------------------------------
@@ -62,6 +68,9 @@ if bool:
     root6_meridians="../../data/parallel_meridians/meridians.txt"
     root7_parallels="../../data/parallel_meridians/parallels.txt"
 
+    start = timeit.default_timer()
+
+
 
     coords1=point_calc(root1)
     coords2=point_calc(root2)
@@ -70,6 +79,8 @@ if bool:
     coords5=point_calc(root5)
     coords6_meridians=point_calc(root6_meridians)
     coords7_parallels=point_calc(root7_parallels)
+
+
 
     if bool2:
 
@@ -101,73 +112,44 @@ else:
 # PLOTTING
 #----------------------------------------------------------------------
 
-fig, ax = plt.subplots(figsize=(20, 11.25))
-ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
-x1 = [punto[0] for punto in coords1]
-y1 = [punto[1] for punto in coords1]
 
-x2 = [punto[0] for punto in coords2]
-y2 = [punto[1] for punto in coords2]
 
-x3 = [punto[0] for punto in coords3]
-y3 = [punto[1] for punto in coords3]
 
-x4 = [punto[0] for punto in coords4]
-y4 = [punto[1] for punto in coords4]
+df1 = pd.DataFrame(coords1, columns=["x", "y"])
+df1["source"] = "points1"
+df2 = pd.DataFrame(coords2, columns=["x", "y"])
+df2["source"] = "points2"
+df3 = pd.DataFrame(coords3, columns=["x", "y"])
+df3["source"] = "points3"
+df4 = pd.DataFrame(coords4, columns=["x", "y"])
+df4["source"] = "points4"
+df5 = pd.DataFrame(coords5, columns=["x", "y"])
+df5["source"] = "points5"
+df6 = pd.DataFrame(coords6_meridians, columns=["x", "y"])
+df6["source"] = "points6"
+df7 = pd.DataFrame(coords7_parallels, columns=["x", "y"])
+df7["source"] = "points7"
 
-x5 = [punto[0] for punto in coords5]
-y5 = [punto[1] for punto in coords5]
 
-x_mer = [punto[0] for punto in coords6_meridians]
-y_mer = [punto[1] for punto in coords6_meridians]
+df = pd.concat([df1, df2, df3, df4, df5, df6, df7], ignore_index=True)
 
-x_pal = [punto[0] for punto in coords7_parallels]
-y_pal = [punto[1] for punto in coords7_parallels]
+canvas = ds.Canvas(plot_width=2000, plot_height=1000, x_range=(-np.pi, np.pi), y_range=(-2, 2))
+a1 = canvas.points(df, 'x', 'y')  # only 2D for now
 
-# Plotting of coastlines
-plt.scatter(x1, y1, s=0.01)
-plt.scatter(x2, y2, s=0.01)
-plt.scatter(x3, y3, s=0.01)
-plt.scatter(x4, y4, s=0.01)
-plt.scatter(x5, y5, s=0.01)
-plt.scatter(x_mer, y_mer, s=0.01, alpha=0.2, c='k')
-plt.scatter(x_pal, y_pal, s=0.01, alpha=0.2, c='k')
 
-# Plot limit
-h=np.linspace(-2,2,1000)
-l=np.linspace(-np.pi, np.pi,1000)
 
-cons1=[-2]*1000
-cons2=[2]*1000
-cons3=[-np.pi]*1000
-cons4=[np.pi]*1000
+img = tf.shade(a1,cmap=["black"])
+img = tf.set_background(img, "white") 
 
-plt.plot(l,cons1,c='k')
-plt.plot(l,cons2,c='k')
-plt.plot(cons3,h,c='k')
-plt.plot(cons4,h,c='k')
+img.to_pil().show()
 
-# Title
-plt.title(name)
-plt.xlim(-np.pi, np.pi)
-plt.ylim(-2, 2)
-plt.gca().set_aspect(np.pi/4, adjustable='box')
 
-#save png
-if not os.path.exists("../png/"):
-    os.makedirs("../png/")
+stop = timeit.default_timer()
 
-if not os.path.exists("../png/all_maps/"):
-    os.makedirs("../png/all_maps/")
+print('Time: ', stop - start)  
 
-plt.savefig("../png/"+name+".png", dpi=300, bbox_inches='tight')
 
-root_all_maps="../png/all_maps/"
-files=os.listdir(root_all_maps)
-n=str(len(files)+1)
 
-plt.savefig(root_all_maps+n+".png", dpi=300, bbox_inches='tight')
 
-# Show Graphic
-plt.show()
+
