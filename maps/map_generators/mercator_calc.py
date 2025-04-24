@@ -36,8 +36,8 @@ name="Mercator_2"
 name="Mercator"
 
 # PARAMETERS
-angle_direction=40
-center_pos=np.array([35,104])
+angle_direction=30
+center_pos=np.array([40,-3])
 
 # PROJECTION
 

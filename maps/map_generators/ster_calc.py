@@ -37,7 +37,7 @@ name="Gnomonic"
 
 # PARAMETERS
 angle=30
-center=np.array([40,-3])
+center=np.array([90, 0])
 
 # PROJECTION
 point_calc=partial(ster_map,phi_max=angle,center=center)
