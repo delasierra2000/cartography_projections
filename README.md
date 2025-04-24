@@ -2,81 +2,53 @@
 
 ## Table of content
 
-* [1. Maps and animations obtained.](#showcase)
+* [1. Maps and animations obtained.](#maps-and-animations)
 
 * [2. Functionality](#functionality)
 
 * [3. Structure](#structure)
 
-## Showcase
+## Maps and animations
 
- q´qwkfm
- qdw
- wdq
- wqd
- w
- wdq
- dwq
- dwq
- dw
- wdq
- wdq
+### *Mercator*
 
- wd
- dw
- dwq
+![130](https://github.com/user-attachments/assets/2f63b415-99df-4c27-bd30-54a916c5aa03)
 
- 
- dwq
- dwq
+### *Transverse Mercator*
 
- 
- dwq
- wdq
+![1](https://github.com/user-attachments/assets/2465222a-f666-4731-8828-dc3c5486421b)
 
- 
- wqd
- wdq
- dwq
+### *Transverse Mercator Animation*
 
- 
- dwq
+https://github.com/user-attachments/assets/7d9d35f7-70b9-4250-9378-23b6b30b5e7b
 
- dwq
- wdq
- dwq
- wdq
+### *Oblique Mercator*
 
- 
- dwq
- dwq
+![131](https://github.com/user-attachments/assets/67a99919-6b2b-4c80-aeb0-3404752040f5)
 
- 
- dwq
 
- 
- dwq
- dwq
- dwq
+### *Standard Gnomonic*
 
- 
+![132](https://github.com/user-attachments/assets/9d9a299f-e8a1-481a-8be8-2d361ae3607d)
 
- 
- dwq
+### *Gnomonic centered in Spain*
 
- 
- dwq
+![133](https://github.com/user-attachments/assets/de15054a-f713-4d54-ae7b-734680c76273)
 
- 
- dwq
+### *Standard Stereographic*
 
- 
- dwq
- qdw
- qdw
- dqw
+![136](https://github.com/user-attachments/assets/65c75840-19b3-4274-8362-c725b0fae763)
 
- 
+### *Stereographic centered in Spain*
+
+![134](https://github.com/user-attachments/assets/d0b6d126-27f0-45b2-8b03-5ca8fecfdd6e)
+
+
+
 ## Functionality
+
+This project is made with the objective of generating maps from data (positions in latitude and longitude.)
+
+Currently the data used are the coordinates of continents coastlines: [CIA WORLD DATA BANK](https://www.evl.uic.edu/pape/data/WDB/)
 
 ## Structure
