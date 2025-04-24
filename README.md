@@ -2,13 +2,23 @@
 
 ## Table of content
 
-* [1. Maps and animations obtained.](#maps-and-animations)
+* [1. Introduction](#introduction)
 
-* [2. Functionality](#functionality)
+* [2. Maps](#maps)
 
-* [3. Structure](#structure)
+* [3. Animations](#animations)
 
-## Maps and animations
+* [4. Functionality](#functionality)
+
+* [5. Structure](#structure)
+
+## Introduction
+
+This project aims to generate maps using data (positions in latitude and longitude).
+
+Currently the data consists of the outlining the coastlines of the continents: [CIA WORLD DATA BANK](https://www.evl.uic.edu/pape/data/WDB/)
+
+## Maps
 
 ### *Mercator*
 
@@ -18,14 +28,9 @@
 
 ![1](https://github.com/user-attachments/assets/2465222a-f666-4731-8828-dc3c5486421b)
 
-### *Transverse Mercator Animation*
-
-https://github.com/user-attachments/assets/7d9d35f7-70b9-4250-9378-23b6b30b5e7b
-
 ### *Oblique Mercator*
 
 ![131](https://github.com/user-attachments/assets/67a99919-6b2b-4c80-aeb0-3404752040f5)
-
 
 ### *Standard Gnomonic*
 
@@ -43,12 +48,26 @@ https://github.com/user-attachments/assets/7d9d35f7-70b9-4250-9378-23b6b30b5e7b
 
 ![134](https://github.com/user-attachments/assets/d0b6d126-27f0-45b2-8b03-5ca8fecfdd6e)
 
+## Animations
+
+### *Transverse Mercator Animation*
+
+https://github.com/user-attachments/assets/faf3505e-0082-4877-a3b5-8ce191fbf50b
+
+### *Gnomonic Map Animation*
+
+https://github.com/user-attachments/assets/57f17d74-ee40-4ac6-8c16-6f8cf74cd58e
+
+### *Stereographic Map Animation*
+
+https://github.com/user-attachments/assets/7b8ef1aa-c444-4e82-bb59-7ee447b07751
+
 
 
 ## Functionality
 
-This project is made with the objective of generating maps from data (positions in latitude and longitude.)
-
-Currently the data used are the coordinates of continents coastlines: [CIA WORLD DATA BANK](https://www.evl.uic.edu/pape/data/WDB/)
+*In development*
 
 ## Structure
+
+*In development*
