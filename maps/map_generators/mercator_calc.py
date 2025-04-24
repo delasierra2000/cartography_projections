@@ -42,7 +42,7 @@ center_pos=np.array([35,104])
 # PROJECTION
 
 
-point_calc=partial(mercator_map2,center=center_pos,angle=angle_direction)
+point_calc=partial(mercator_ob_map,center=center_pos,angle=angle_direction)
 
 
 #----------------------------------------------------------------------

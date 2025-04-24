@@ -55,6 +55,14 @@ def rot2ecuator(center:NDArray[np.float64])->NDArray[np.float64]:
     
     return rot(rotation_vector,lat_0)
 
+def rot_vector2vector(original_vector: NDArray[np.float64],final_vector: NDArray[np.float64])->NDArray[np.float64]:
+
+    alpha=np.arccos(original_vector @ (final_vector.T))
+
+    rotation_vector=-np.cross(original_vector,final_vector)
+    rotation_vector=rotation_vector/np.linalg.norm(rotation_vector)
+
+    return rot(rotation_vector,-alpha)
 
 
 
@@ -64,16 +72,8 @@ def rot2ecuator(center:NDArray[np.float64])->NDArray[np.float64]:
 
 
 
-#Calculates the matrix rotation to rotate one unit vector to another
-def matrix_rot(initial_vector:NDArray[np.float64], final_vector:NDArray[np.float64])->NDArray[np.float64]:
 
 
-    v=np.cross(initial_vector,final_vector)
-    cos=np.dot(final_vector,initial_vector)
 
-    M=np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]],[-v[1],v[0],0]])
 
-    np.identity(3)+M+M@M*(1/(1+cos))
-
-    return np.identity(3)+M+M@M*(1/(1+cos))
 
