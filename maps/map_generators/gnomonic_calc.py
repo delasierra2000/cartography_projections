@@ -37,7 +37,7 @@ name="Gnomonic"
 
 # PARAMETERS
 angle=30
-center=np.array([40,-3])
+center=np.array([-90,0])
 
 # PROJECTION
 point_calc=partial(gnomonic_map,phi_max=angle,center=center)
@@ -142,7 +142,7 @@ df = pd.concat([df1, df2, df3, df4, df5, df6, df7], ignore_index=True)
 
 canvas = ds.Canvas(plot_width=1000, plot_height=1000, x_range=(-r, r), y_range=(-r, r))
 
-a1 = canvas.points(df, 'x', 'y')  # only 2D for now
+a1 = canvas.points(df, 'x', 'y') 
 img1 = tf.shade(a1,cmap=["black"])
 img1 = tf.set_background(img1, "white") 
 

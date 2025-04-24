@@ -25,8 +25,9 @@ from commons.file_management import *
 name="Transverse Mercator Animation"
 
 # PARAMETERS
-angle_direction=90
-long=np.linspace(0,360,1200)
+phi_max=30
+lat=np.linspace(90,-90,600)
+
 
 
 root1="../../data/coastline/asia-cil.txt"
@@ -46,14 +47,14 @@ if not os.path.exists("../png/"):
 if not os.path.exists("../png/all_maps/"):
     os.makedirs("../png/all_maps/")
 
-for l in long:
+for l in lat:
     
 
-    center=np.array([0,l])
+    center=np.array([l,0])
 
 
     # PROJECTION
-    point_calc=partial(mercator_ob_map,center=center,angle=angle_direction)
+    point_calc=partial(ster_map,phi_max=phi_max,center=center)
 
 
     #----------------------------------------------------------------------
@@ -91,18 +92,30 @@ for l in long:
     df7 = pd.DataFrame(coords7_parallels, columns=["x", "y"])
     df7["source"] = "points7"
 
+    r=np.cos(phi_max*2*np.pi/360)/(1+np.sin(phi_max*2*np.pi/360))
+    list_theta=np.linspace(0,2*np.pi,10000)
+    x=[r*np.cos(t) for t in list_theta]
+    y=[r*np.sin(t) for t in list_theta]
+
+    df_circle=pd.DataFrame({'x':x,'y':y})
+
 
     df = pd.concat([df1, df2, df3, df4, df5, df6, df7], ignore_index=True)
 
-    canvas = ds.Canvas(plot_width=2000, plot_height=1000, x_range=(-np.pi, np.pi), y_range=(-2, 2))
+    canvas = ds.Canvas(plot_width=1000, plot_height=1000, x_range=(-r, r), y_range=(-r, r))
     a1 = canvas.points(df, 'x', 'y')  
 
 
-    img = tf.shade(a1,cmap=["black"])
-    img = tf.set_background(img, "white") 
+    img1 = tf.shade(a1,cmap=["black"])
+    img1 = tf.set_background(img1, "white") 
+
+    a2 = canvas.points(df_circle, 'x', 'y')
+    img2 = tf.shade(a2, cmap=["black"])
+
+    img= tf.stack(img1, img2)
 
     #Save
     save_maps_enumerated(img)
 
     i=i+1
-    print(str(i)+"/1200")
+    print(str(i)+"/600")
