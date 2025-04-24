@@ -4,6 +4,10 @@ import math as m
 from typing import List, Dict, Union
 from numpy.typing import NDArray
 from functools import partial
+import timeit
+import datashader as ds
+import datashader.transfer_functions as tf
+import pandas as pd
 
 import os
 import sys
@@ -32,12 +36,11 @@ name="Gnomonic_2"
 name="Gnomonic"
 
 # PARAMETERS
-angle=0
-center=np.array([90,0])
+angle=30
+center=np.array([-90,0])
 
 # PROJECTION
 point_calc=partial(gnomonic_map,phi_max=angle,center=center)
-
 
 
 #----------------------------------------------------------------------
@@ -63,6 +66,9 @@ if bool:
     root6_meridians="../../data/parallel_meridians/meridians.txt"
     root7_parallels="../../data/parallel_meridians/parallels.txt"
 
+    start = timeit.default_timer()
+
+
 
     coords1=point_calc(root1)
     coords2=point_calc(root2)
@@ -71,6 +77,8 @@ if bool:
     coords5=point_calc(root5)
     coords6_meridians=point_calc(root6_meridians)
     coords7_parallels=point_calc(root7_parallels)
+
+
 
     if bool2:
 
@@ -102,64 +110,59 @@ else:
 # PLOTTING
 #----------------------------------------------------------------------
 
-fig, ax = plt.subplots(figsize=(20, 11.25))
 
-x1 = [punto[0] for punto in coords1]
-y1 = [punto[1] for punto in coords1]
 
-x2 = [punto[0] for punto in coords2]
-y2 = [punto[1] for punto in coords2]
 
-x3 = [punto[0] for punto in coords3]
-y3 = [punto[1] for punto in coords3]
 
-x4 = [punto[0] for punto in coords4]
-y4 = [punto[1] for punto in coords4]
+df1 = pd.DataFrame(coords1, columns=["x", "y"])
+df1["source"] = "points1"
+df2 = pd.DataFrame(coords2, columns=["x", "y"])
+df2["source"] = "points2"
+df3 = pd.DataFrame(coords3, columns=["x", "y"])
+df3["source"] = "points3"
+df4 = pd.DataFrame(coords4, columns=["x", "y"])
+df4["source"] = "points4"
+df5 = pd.DataFrame(coords5, columns=["x", "y"])
+df5["source"] = "points5"
+df6 = pd.DataFrame(coords6_meridians, columns=["x", "y"])
+df6["source"] = "points6"
+df7 = pd.DataFrame(coords7_parallels, columns=["x", "y"])
+df7["source"] = "points7"
 
-x5 = [punto[0] for punto in coords5]
-y5 = [punto[1] for punto in coords5]
-
-x_mer = [punto[0] for punto in coords6_meridians]
-y_mer = [punto[1] for punto in coords6_meridians]
-
-x_pal = [punto[0] for punto in coords7_parallels]
-y_pal = [punto[1] for punto in coords7_parallels]
-
-# Plotting of coastlines
-plt.scatter(x1, y1, s=0.01)
-plt.scatter(x2, y2, s=0.01)
-plt.scatter(x3, y3, s=0.01)
-plt.scatter(x4, y4, s=0.01)
-plt.scatter(x5, y5, s=0.01)
-plt.scatter(x_mer, y_mer, s=0.01, alpha=0.2, c='k')
-plt.scatter(x_pal, y_pal, s=0.01, alpha=0.2, c='k')
-
-# Plot limit
 r=1/np.tan(angle*2*np.pi/360)
-list_theta=np.linspace(0,2*np.pi,1000)
+list_theta=np.linspace(0,2*np.pi,10000)
 x=[r*np.cos(t) for t in list_theta]
 y=[r*np.sin(t) for t in list_theta]
 
-plt.plot(x, y, c='k')
+df_circle=pd.DataFrame({'x':x,'y':y})
 
-# Title
-plt.title(name)
-plt.gca().set_aspect(1, adjustable='box')
+df = pd.concat([df1, df2, df3, df4, df5, df6, df7], ignore_index=True)
 
-#save png
-if not os.path.exists("../png/"):
-    os.makedirs("../png/")
 
-if not os.path.exists("../png/all_maps/"):
-    os.makedirs("../png/all_maps/")
 
-plt.savefig("../png/"+name+".png", dpi=300, bbox_inches='tight')
+canvas = ds.Canvas(plot_width=1000, plot_height=1000, x_range=(-r, r), y_range=(-r, r))
 
-root_all_maps="../png/all_maps/"
-files=os.listdir(root_all_maps)
-n=str(len(files)+1)
+a1 = canvas.points(df, 'x', 'y') 
+img1 = tf.shade(a1,cmap=["black"])
+img1 = tf.set_background(img1, "white") 
 
-plt.savefig(root_all_maps+n+".png", dpi=300, bbox_inches='tight')
+a2 = canvas.points(df_circle, 'x', 'y')
+img2 = tf.shade(a2, cmap=["black"])
 
-# Show Graphic
-plt.show()
+
+img= tf.stack(img1, img2)
+
+#Show img
+img.to_pil().show()
+
+#Save
+save_maps_enumerated(img)
+
+#Show time
+stop = timeit.default_timer()
+
+print('Time: ', stop - start)  
+
+
+
+
