@@ -41,7 +41,6 @@ center_pos=np.array([35,104])
 
 # PROJECTION
 
-
 point_calc=partial(mercator_ob_map,center=center_pos,angle=angle_direction)
 
 
@@ -113,9 +112,6 @@ else:
 #----------------------------------------------------------------------
 
 
-
-
-
 df1 = pd.DataFrame(coords1, columns=["x", "y"])
 df1["source"] = "points1"
 df2 = pd.DataFrame(coords2, columns=["x", "y"])
@@ -135,19 +131,25 @@ df7["source"] = "points7"
 df = pd.concat([df1, df2, df3, df4, df5, df6, df7], ignore_index=True)
 
 canvas = ds.Canvas(plot_width=2000, plot_height=1000, x_range=(-np.pi, np.pi), y_range=(-2, 2))
-a1 = canvas.points(df, 'x', 'y')  # only 2D for now
-
+a1 = canvas.points(df, 'x', 'y')  
 
 
 img = tf.shade(a1,cmap=["black"])
 img = tf.set_background(img, "white") 
 
+#Show img
 img.to_pil().show()
 
 
+#Save
+save_maps_enumerated(img)
+
+#Show time
 stop = timeit.default_timer()
 
 print('Time: ', stop - start)  
+
+
 
 
 

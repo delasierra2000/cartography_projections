@@ -118,8 +118,6 @@ def gnomonic_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=
 
     M=rot_vector2vector(vector_center,np.array([0,0,1]))
 
-    print(vector_center @ M)
-
 
     rotated_data = CtoE(EtoC(data) @ M)
 
@@ -131,36 +129,39 @@ def gnomonic_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=
 #----------------------------------------
 
 #function that pojects the points on the spheric surface onto the the cylinder 
-def proj_standard_stereographic(vector: NDArray[np.float64])->NDArray[np.float64]:
+def proj_standard_ster(vector: NDArray[np.float64],phi_max: np.float64)->NDArray[np.float64]:
 
-    vector=np.array([0,0,1])+vector
+    
+    vector=vector[(vector[:,0]>-np.pi/2) & (vector[:,0]>phi_max)]
+    phi=vector[:,0]
+    lamb=vector[:,1]
 
-    Mg=np.array([[np.cos(-np.pi/2),-np.sin(-np.pi/2)],[np.sin(-np.pi/2),np.cos(-np.pi/2)]])
+    x = np.cos(phi)*np.sin(lamb)/(1+np.sin(phi))
 
-    constant=2/(vector[2])
+    y = -np.cos(phi)*np.cos(lamb)/(1+np.sin(phi))
 
-    sol=Mg @ (constant*vector[0:2])
-        
-    return sol
+    return np.stack((x,y),axis=1)
+
+def ster_standard_map(root: str, phi_max: np.float64=45)->List[NDArray[np.float64]]:
+
+    data=file_data_extraction(root)*2*np.pi/360
+    phi_max=phi_max*2*np.pi/360
+
+    return proj_standard_ster(data, phi_max)
+
+def ster_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=np.array([90,0]))->List[NDArray[np.float64]]:
+
+    phi_max=phi_max*2*np.pi/360
+    center=center*2*np.pi/360
+    data=file_data_extraction(root)*2*np.pi/360
+
+    center_as_matrix=center[np.newaxis, :]
+    vector_center=EtoC(center_as_matrix)
+
+    M=rot_vector2vector(vector_center,np.array([0,0,1]))
 
 
-def stereographic_standard_map(root: str, phi_max: np.float64=30)->List[NDArray[np.float64]]:
+    rotated_data = CtoE(EtoC(data) @ M)
 
-    data=file_data_extraction(root)
-    data=[x for x in data if x[0]>phi_max]
-
-    return [proj_standard_stereographic(EtoC(x)) for x in data]
-
-def stereographic_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=np.array([90,0]))->List[NDArray[np.float64]]:
-
-
-
-    data=file_data_extraction(root)
-    data=[EtoC(x) for x in data]
-    direction=EtoC(center)
-    M=matrix_rot(direction,np.array([0,0,1]))
-    data=[M @ x for x in data]
-    data2=[x for x in data if x[2]>np.sin(phi_max*2*np.pi/360)]
-
-    return [proj_standard_stereographic(x) for x in data2]
+    return proj_standard_ster(rotated_data, phi_max)
 

@@ -37,7 +37,7 @@ name="Gnomonic"
 
 # PARAMETERS
 angle=30
-center=np.array([45,0])
+center=np.array([40,-3])
 
 # PROJECTION
 point_calc=partial(gnomonic_map,phi_max=angle,center=center)
@@ -152,13 +152,16 @@ img2 = tf.shade(a2, cmap=["black"])
 
 img= tf.stack(img1, img2)
 
+#Show img
 img.to_pil().show()
 
+#Save
+save_maps_enumerated(img)
 
+#Show time
 stop = timeit.default_timer()
 
 print('Time: ', stop - start)  
-
 
 
 
