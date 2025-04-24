@@ -105,4 +105,4 @@ for l in long:
     save_maps_enumerated(img)
 
     i=i+1
-    print(str(i)+"/300")º
+    print(str(i)+"/300")
