@@ -1,9 +1,7 @@
 import numpy as np
-from typing import List, Dict, Union
 from numpy.typing import NDArray
 import os
 import sys
-import timeit
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -40,11 +38,8 @@ def proj_cylinder(vector: NDArray[np.float64],long_ini:float)->NDArray[np.float6
 
 
 
-
-
-
 #funtion to obtain the points in the 2D representation (Mercator)
-def mercator_map(root: str,long_ini: np.float64)->List[NDArray[np.float64]]:
+def mercator_map(root: str,long_ini: np.float64)->NDArray[np.float64]:
 
     factor=2*np.pi/360
     long_ini=long_ini*factor
@@ -52,7 +47,7 @@ def mercator_map(root: str,long_ini: np.float64)->List[NDArray[np.float64]]:
 
     return proj_cylinder(data,long_ini)
 
-def mercator_ob_map(root: str, center: NDArray[np.float64], angle: np.float64)->List[NDArray[np.float64]]:
+def mercator_ob_map(root: str, center: NDArray[np.float64], angle: np.float64)->NDArray[np.float64]:
 
     data=file_data_extraction(root)
     data=data*2*np.pi/360
@@ -100,14 +95,14 @@ def proj_standard_gnomonic(vector: NDArray[np.float64],phi_max: np.float64)->NDA
     return np.stack((x,y),axis=1)
 
 
-def gnomonic_standard_map(root: str, phi_max: np.float64=45)->List[NDArray[np.float64]]:
+def gnomonic_standard_map(root: str, phi_max: np.float64=45)->NDArray[np.float64]:
 
     data=file_data_extraction(root)*2*np.pi/360
     phi_max=phi_max*2*np.pi/360
 
     return proj_standard_gnomonic(data, phi_max)
 
-def gnomonic_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=np.array([90,0]))->List[NDArray[np.float64]]:
+def gnomonic_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=np.array([90,0]))->NDArray[np.float64]:
 
     phi_max=phi_max*2*np.pi/360
     center=center*2*np.pi/360
@@ -142,14 +137,14 @@ def proj_standard_ster(vector: NDArray[np.float64],phi_max: np.float64)->NDArray
 
     return np.stack((x,y),axis=1)
 
-def ster_standard_map(root: str, phi_max: np.float64=45)->List[NDArray[np.float64]]:
+def ster_standard_map(root: str, phi_max: np.float64=45)->NDArray[np.float64]:
 
     data=file_data_extraction(root)*2*np.pi/360
     phi_max=phi_max*2*np.pi/360
 
     return proj_standard_ster(data, phi_max)
 
-def ster_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=np.array([90,0]))->List[NDArray[np.float64]]:
+def ster_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=np.array([90,0]))->NDArray[np.float64]:
 
     phi_max=phi_max*2*np.pi/360
     center=center*2*np.pi/360
@@ -165,3 +160,37 @@ def ster_map(root: str, phi_max: np.float64=45, center: NDArray[np.float64]=np.a
 
     return proj_standard_ster(rotated_data, phi_max)
 
+#----------------------------------------
+# CONIC
+#----------------------------------------
+
+def proj_standard_conic(vector: NDArray[np.float64], center: NDArray[np.float64], phi1: np.float64, phi2: np.float64)->NDArray[np.float64]:
+ 
+    
+    vector=vector[vector[:,0]>=0]
+    phi=vector[:,0]
+    lamb=vector[:,1]
+    phi0=center[0]
+    lamb0=center[1]
+
+    n=(np.sin(phi1)+np.sin(phi2))/2
+    C=np.cos(phi1)**2+2*n*np.sin(phi1)
+    ro0=np.sqrt(C-2*n*np.sin(phi0))/n
+    theta=n*lamb
+    ro=np.sqrt(C-2*n*np.sin(phi))/n
+
+    x = ro*np.sin(theta)
+    y = ro0-ro*np.cos(theta)
+
+
+    return np.stack((x,y),axis=1)
+
+def standard_conic_map(root: str, center: NDArray[np.float64], phi1: np.float64, phi2: np.float64)->NDArray[np.float64]:
+
+    data=file_data_extraction(root)*2*np.pi/360
+    center=center*2*np.pi/360
+    phi1=phi1*2*np.pi/360
+    phi2=phi2*2*np.pi/360
+
+
+    return proj_standard_conic(data, center, phi1, phi2)

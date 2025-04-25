@@ -32,11 +32,12 @@ name="Gnomonic_2"
 name="Gnomonic"
 
 # PARAMETERS
-angle=30
-center=np.array([90, 0])
+phi1=40
+phi2=60
+center=np.array([90,0])
 
 # PROJECTION
-point_calc=partial(ster_map,phi_max=angle,center=center)
+point_calc=partial(standard_conic_map,center=center, phi1=phi1, phi2=phi2)
 
 
 #----------------------------------------------------------------------
@@ -127,40 +128,26 @@ df7["source"] = "points7"
 
 
 
-r=np.cos(angle*2*np.pi/360)/(1+np.sin(angle*2*np.pi/360))
-list_theta=np.linspace(0,2*np.pi,10000)
-x=[r*np.cos(t) for t in list_theta]
-y=[r*np.sin(t) for t in list_theta]
-
-df_circle=pd.DataFrame({'x':x,'y':y})
-
 df = pd.concat([df1, df2, df3, df4, df5, df6, df7], ignore_index=True)
 
+r=-proj_standard_conic(np.array([[0,0]]),center=center,phi1=phi1,phi2=phi2)[0,1]
+print(r)
+r=2
+canvas = ds.Canvas(plot_width=1000, plot_height=1000,x_range=(-r,r), y_range=(-r,r))
 
-
-canvas = ds.Canvas(plot_width=1000, plot_height=1000, x_range=(-r, r), y_range=(-r, r))
-
-a1 = canvas.points(df, 'x', 'y')  # only 2D for now
+a1 = canvas.points(df, 'x', 'y') 
 img1 = tf.shade(a1,cmap=["black"])
 img1 = tf.set_background(img1, "white") 
 
-a2 = canvas.points(df_circle, 'x', 'y')
-img2 = tf.shade(a2, cmap=["black"])
-
-
-img= tf.stack(img1, img2)
 
 #Show img
-img.to_pil().show()
+img1.to_pil().show()
 
 #Save
-save_maps_enumerated(img)
+save_maps_enumerated(img1)
 
 #Show time
 stop = timeit.default_timer()
 
 print('Time: ', stop - start)  
-
-
-
 

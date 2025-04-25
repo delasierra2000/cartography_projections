@@ -1,5 +1,4 @@
 import numpy as np
-from typing import List, Dict, Union
 from numpy.typing import NDArray
 
 #Degrees to radians

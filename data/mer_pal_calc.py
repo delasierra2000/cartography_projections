@@ -1,7 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import math as m
-from typing import List, Dict, Union
 from numpy.typing import NDArray
 import os
 import sys
@@ -36,7 +33,7 @@ def save_coords(root: str, data: list[NDArray[np.float64]]):
 phi=np.linspace(-89.99,89.99,10000)
 meridian=[]
 for i in range (0,24):
-    long=15*i
+    long=15*i-180
     meridian=meridian+[np.array([p,long]) for p in phi]
 
 meridians_points=meridian
@@ -48,7 +45,7 @@ save_coords(root,meridians_points)
 
 #parallels
 
-long=np.linspace(0,360,10000)
+long=np.linspace(-180,180,10000)
 parallel=[]
 
 for i in range (-5,6):
